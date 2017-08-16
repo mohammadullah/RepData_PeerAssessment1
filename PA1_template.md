@@ -1,11 +1,6 @@
----
-title: "Course project 1"
-author: "Mohammad W. Ullah"
-date: "August 15, 2017"
-output: 
-    html_document: 
-        keep_md: true 
----
+# Course project 1
+Mohammad W. Ullah  
+August 15, 2017  
 
 Week 2 assignment for Reproducible research
 ----------------------
@@ -14,13 +9,23 @@ This assignment makes use of data from a personal activity monitoring device. Th
 
 At first, read the data and load libraries required for this assignment
 
-```{r readdata}
 
+```r
 library(ggplot2)
 library(tidyr)
 
 activity <- read.csv("activity.csv")
 head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 ### Problem 1
@@ -33,20 +38,47 @@ For this part of the assignment, you can ignore the missing values in the datase
 2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
 3. Calculate and report the mean and median of the total number of steps taken per day
 
-```{r prob1}
 
+```r
 data1 = tapply(activity$steps, activity$date, sum, na.rm = TRUE)
 df1 <- data.frame(days = names(data1), steps = data1)
 head(df1)
+```
 
+```
+##                  days steps
+## 2012-10-01 2012-10-01     0
+## 2012-10-02 2012-10-02   126
+## 2012-10-03 2012-10-03 11352
+## 2012-10-04 2012-10-04 12116
+## 2012-10-05 2012-10-05 13294
+## 2012-10-06 2012-10-06 15420
+```
+
+```r
 p <- ggplot(df1, aes(steps)) + geom_histogram(binwidth = 2000) +
     labs(title="Figure 1: Histogram of total number of steps taken each 
          day") + geom_vline(xintercept = median(df1$steps), colour = "red") +
     geom_vline(xintercept = mean(df1$steps), colour = "green")
 plot(p)
+```
 
+![](PA1_template_files/figure-html/prob1-1.png)<!-- -->
+
+```r
 print(paste0("Mean : ", mean(df1$steps)))
+```
+
+```
+## [1] "Mean : 9354.22950819672"
+```
+
+```r
 print(paste0("Median : ", median(df1$steps)))
+```
+
+```
+## [1] "Median : 10395"
 ```
 
 ### Problem 2
@@ -56,8 +88,8 @@ print(paste0("Median : ", median(df1$steps)))
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r prob2}
 
+```r
 data2 = tapply(activity$steps, activity$interval, mean, na.rm = TRUE)
 df2 <- data.frame(intervals = names(data2), steps = data2)
 
@@ -70,8 +102,9 @@ p1 <- ggplot(df2, aes(x = intervals, y = steps)) +
     labs(title="Figure 2: Average number of steps taken in each interval")
 
 plot(p1)
-
 ```
+
+![](PA1_template_files/figure-html/prob2-1.png)<!-- -->
 
 As we can see in the plot, number of step in maximum at the interval of 835
 
@@ -88,29 +121,57 @@ Note that there are a number of days/intervals where there are missing values (c
 
 Number of missing values
 
-```{r prob3.1}
 
+```r
 sapply(activity, function(x) sum(is.na(x)))
+```
+
+```
+##    steps     date interval 
+##     2304        0        0
 ```
 
 To find the mission value for each interval, mean of that 5-minute interval is used, calculated in the previous section (df2).
 
-```{r prob3.2}
+
+```r
 head(df2)
+```
+
+```
+##    intervals     steps
+## 0          0 1.7169811
+## 5          5 0.3396226
+## 10        10 0.1320755
+## 15        15 0.1509434
+## 20        20 0.0754717
+## 25        25 2.0943396
 ```
 
 A subset containing only the mission rows are created and the missing values are filled in from the df2 data frame. 
 
-```{r prob3.3.0}
+
+```r
 data.na <- activity[!complete.cases(activity),]
 data.na$steps <- df2$steps[match(data.na$interval, df2$interval)]
 data.na$count1 <- rownames(data.na)
 head(data.na)
 ```
 
+```
+##       steps       date interval count1
+## 1 1.7169811 2012-10-01        0      1
+## 2 0.3396226 2012-10-01        5      2
+## 3 0.1320755 2012-10-01       10      3
+## 4 0.1509434 2012-10-01       15      4
+## 5 0.0754717 2012-10-01       20      5
+## 6 2.0943396 2012-10-01       25      6
+```
+
 A new data set named "activity_new" is created by filling in the missing values in the "activity" data set.
 
-```{r prob3.3}
+
+```r
 activity_new <- activity
 activity_new$count1 <- rownames(activity_new)
 activity_new[match(data.na$count1, activity_new$count1), ] <- data.na
@@ -118,9 +179,20 @@ activity_new$count1 <- NULL
 head(activity_new)
 ```
 
+```
+##       steps       date interval
+## 1 1.7169811 2012-10-01        0
+## 2 0.3396226 2012-10-01        5
+## 3 0.1320755 2012-10-01       10
+## 4 0.1509434 2012-10-01       15
+## 5 0.0754717 2012-10-01       20
+## 6 2.0943396 2012-10-01       25
+```
+
 A histogram of total number of steps taken each day using the new dataset. Also the mean and median of the total number of steps. 
 
-```{r prob3}
+
+```r
 data3 = tapply(activity_new$steps, activity_new$date, sum)
 df3 <- data.frame(days = names(data3), steps = data3)
 
@@ -131,9 +203,24 @@ p2 <- ggplot(df3, aes(steps)) + geom_histogram(binwidth = 2000) +
     geom_vline(xintercept = mean(df3$steps), colour = "green")
 
 plot(p2)
+```
 
+![](PA1_template_files/figure-html/prob3-1.png)<!-- -->
+
+```r
 print(paste0("Mean : ", mean(df3$steps)))
+```
+
+```
+## [1] "Mean : 10766.1886792453"
+```
+
+```r
 print(paste0("Median : ", median(df3$steps)))
+```
+
+```
+## [1] "Median : 10766.1886792453"
 ```
 
 As we can see from Figure 1 and 3 also from the calculated values, both mean (green) and median (red) are increased after filling in the missing values.Another interesting feature is that after missing values are introduced, mean and median become same. If we used another approach like taking the average of that day to fill in the missing value the result might be different.
@@ -150,7 +237,8 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 Creating new factor variable in the dataset showing weekday and weekend
 
-```{r prob 4.1}
+
+```r
 activity_new$date <- as.Date(activity_new$date)
 activity_new$week <- ifelse(weekdays(activity_new$date) %in% 
                                 c("Saturday", "Sunday"), "weekend", "weekday")
@@ -158,9 +246,18 @@ activity_new$week <- factor(activity_new$week)
 str(activity_new)
 ```
 
+```
+## 'data.frame':	17568 obs. of  4 variables:
+##  $ steps   : num  1.717 0.3396 0.1321 0.1509 0.0755 ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+##  $ week    : Factor w/ 2 levels "weekday","weekend": 1 1 1 1 1 1 1 1 1 1 ...
+```
+
 A panel plot showing the time evolution of average steps taken during weekend and weekdays
 
-```{r prob 4}
+
+```r
 data3 = with(activity_new, tapply(steps, list(week, interval), mean))
 data4 <- data.frame(interval = as.numeric(as.character(colnames(data3))), 
                     weekday = data3[1,], weekend = data3[2,])
@@ -177,5 +274,7 @@ p3 <- ggplot(data5, aes(interval, step)) + geom_line() +
 
 plot(p3)
 ```
+
+![](PA1_template_files/figure-html/prob 4-1.png)<!-- -->
 
 Figure 4 shows that highest peak of the step count during the weekdays is higher than the weekends. On the otherhand, average step over all the intervals are higher during weekends.
