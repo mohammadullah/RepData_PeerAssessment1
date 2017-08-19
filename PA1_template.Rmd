@@ -160,7 +160,7 @@ str(activity_new)
 
 A panel plot showing the time evolution of average steps taken during weekend and weekdays
 
-```{r prob 4}
+```{r prob4}
 data3 = with(activity_new, tapply(steps, list(week, interval), mean))
 data4 <- data.frame(interval = as.numeric(as.character(colnames(data3))), 
                     weekday = data3[1,], weekend = data3[2,])

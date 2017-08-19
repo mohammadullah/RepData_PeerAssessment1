@@ -275,6 +275,6 @@ p3 <- ggplot(data5, aes(interval, step)) + geom_line() +
 plot(p3)
 ```
 
-![](PA1_template_files/figure-html/prob 4-1.png)<!-- -->
+![](PA1_template_files/figure-html/prob4-1.png)<!-- -->
 
 Figure 4 shows that highest peak of the step count during the weekdays is higher than the weekends. On the otherhand, average step over all the intervals are higher during weekends.
